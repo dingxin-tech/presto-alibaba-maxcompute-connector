@@ -1,0 +1,8 @@
+/target/
+/target/checkstyle-cachefile
+/target/checkstyle-checker.xml
+/target/checkstyle-result.xml
+/dependency-reduced-pom.xml
+/presto-connector.iml
+/presto-maxcompute.iml
+/.idea/
