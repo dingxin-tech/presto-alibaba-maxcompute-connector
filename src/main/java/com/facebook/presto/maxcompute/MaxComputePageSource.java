@@ -53,6 +53,7 @@ public class MaxComputePageSource
     private final SplitReader<VectorSchemaRoot> reader;
     private final Odps odps;
     private final MaxComputeTableHandle tableHandle;
+    private boolean isFinished;
 
     public MaxComputePageSource(
             MaxComputeConfig config,
@@ -63,7 +64,9 @@ public class MaxComputePageSource
         this.odps = MaxComputeUtils.getOdps(requireNonNull(config, "connector config is null"));
         this.tableHandle = requireNonNull(tableLayoutHandle, "tableLayoutHandle is null").getTableHandle();
         requireNonNull(split, "split is null");
+        this.isFinished = false;
 
+        LOG.info(String.format("create maxcompute page source, requireColumns: %s, split: %s", requireColumns, split));
         TableSchema schema = odps.tables().get(tableHandle.getProjectId(), tableHandle.getSchemaName(), tableHandle.getTableName()).getSchema();
         this.allocator = ArrowUtils.getRootAllocator().newChildAllocator(UUID.randomUUID().toString(), 1024, Long.MAX_VALUE);
         this.arrowToPageConverter = new ArrowToPageConverter(requireColumns, schema.getColumns());
@@ -104,7 +107,7 @@ public class MaxComputePageSource
     public boolean isFinished()
     {
         try {
-            return !reader.hasNext();
+            return isFinished;
         }
         catch (Exception e) {
             throw new PrestoException(MaxComputeErrorCode.MAXCOMPUTE_CONNECTOR_ERROR, "check page is finished error", e);
@@ -117,6 +120,7 @@ public class MaxComputePageSource
         checkState(pageBuilder.isEmpty(), "PageBuilder is not empty at the beginning of a new page");
         try {
             if (!reader.hasNext()) {
+                isFinished = true;
                 return null;
             }
         }
@@ -140,6 +144,7 @@ public class MaxComputePageSource
     @Override
     public void close()
     {
+        LOG.info(String.format("success read %s rows", readRowCount.get()));
         try {
             reader.close();
         }

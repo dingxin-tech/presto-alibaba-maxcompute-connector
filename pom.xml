@@ -13,6 +13,9 @@
         <odps.sdk.version>0.48.2-public</odps.sdk.version>
         <airlift.version>0.207</airlift.version>
         <presto.version>0.286</presto.version>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>

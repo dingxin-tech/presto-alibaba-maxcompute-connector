@@ -22,13 +22,13 @@ import com.facebook.presto.spi.SplitWeight;
 import com.facebook.presto.spi.schedule.NodeSelectionStrategy;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalLong;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static java.util.Objects.requireNonNull;
 
 public class MaxComputeSplit
@@ -121,20 +121,10 @@ public class MaxComputeSplit
         return (TableBatchReadSession) CommonUtils.deserialize(session);
     }
 
-    public void saveOdpsConf(MaxComputeConfig config)
+    @Override
+    public String toString()
     {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        if (properties != null) {
-            builder.putAll(properties);
-        }
-        builder.put("odpsConfig", CommonUtils.serialize(config));
-        properties = builder.build();
-    }
-
-    public MaxComputeConfig getOdpsConf()
-    {
-        String odpsConfig = properties.get("odpsConfig");
-        return (MaxComputeConfig) CommonUtils.deserialize(odpsConfig);
+        return split.toString();
     }
 
     private String getSerializeSession(TableBatchReadSession session)

@@ -33,6 +33,7 @@ import com.aliyun.odps.table.arrow.accessor.ArrowVarBinaryAccessor;
 import com.aliyun.odps.table.arrow.accessor.ArrowVarCharAccessor;
 import com.aliyun.odps.table.arrow.accessor.ArrowVectorAccessor;
 import com.aliyun.odps.type.ArrayTypeInfo;
+import com.aliyun.odps.type.DecimalTypeInfo;
 import com.aliyun.odps.type.MapTypeInfo;
 import com.aliyun.odps.type.StructTypeInfo;
 import com.aliyun.odps.type.TypeInfo;
@@ -149,7 +150,7 @@ public class ArrowUtils
                 return ((ArrowFloat8Accessor) dataAccessor).getDouble(rowId);
             case DECIMAL:
                 BigDecimal decimal = ((ArrowDecimalAccessor) dataAccessor).getDecimal(rowId);
-                if (decimal.precision() <= MAX_SHORT_PRECISION) {
+                if (((DecimalTypeInfo) typeInfo).getPrecision() <= MAX_SHORT_PRECISION) {
                     // short decimal (long)
                     return decimal.unscaledValue().longValue();
                 }

@@ -17,6 +17,7 @@ import com.aliyun.odps.Column;
 import com.aliyun.odps.table.arrow.accessor.ArrowVectorAccessor;
 import com.aliyun.odps.type.TypeInfo;
 import com.aliyun.odps.type.TypeInfoFactory;
+import com.facebook.airlift.log.Logger;
 import com.facebook.presto.common.PageBuilder;
 import com.facebook.presto.common.block.ArrayBlockBuilder;
 import com.facebook.presto.common.block.Block;
@@ -60,7 +61,6 @@ public class ArrowToPageConverter
             BlockBuilder blockBuilder = pageBuilder.getBlockBuilder(column);
             Type prestoType = ((MaxComputeColumnHandle) requireColumns.get(column)).getType();
             TypeInfo odpsType = odpsTypeMap.get(filedName);
-
             transferData(dataAccessor, blockBuilder, prestoType, odpsType, vector.getValueCount());
         }
     }
@@ -72,9 +72,8 @@ public class ArrowToPageConverter
             Object data = ArrowUtils.getData(dataAccessor, odpsType, index);
             if (data == null) {
                 blockBuilder.appendNull();
-                return;
             }
-            if (javaType == boolean.class) {
+            else if (javaType == boolean.class) {
                 prestoType.writeBoolean(blockBuilder, (Boolean) data);
             }
             else if (javaType == long.class) {
@@ -86,14 +85,12 @@ public class ArrowToPageConverter
             else if (javaType == Slice.class) {
                 prestoType.writeSlice(blockBuilder, (Slice) data);
             }
-            else if (javaType == Block.class) {
-                if (prestoType instanceof ArrayType) {
-                    ArrayType arrayType = (ArrayType) prestoType;
-                    ArrayBlockBuilder arrayBlockBuilder = (ArrayBlockBuilder) blockBuilder;
-                    BlockBuilder elementBlockBuilder = arrayBlockBuilder.getElementBlockBuilder();
-                    List object = (List) data;
-                    transferData(new SimpleDataAccessor(object), elementBlockBuilder, arrayType.getElementType(), TypeInfoFactory.UNKNOWN, object.size());
-                }
+            else if (javaType == Block.class && prestoType instanceof ArrayType) {
+                ArrayType arrayType = (ArrayType) prestoType;
+                ArrayBlockBuilder arrayBlockBuilder = (ArrayBlockBuilder) blockBuilder;
+                BlockBuilder elementBlockBuilder = arrayBlockBuilder.getElementBlockBuilder();
+                List object = (List) data;
+                transferData(new SimpleDataAccessor(object), elementBlockBuilder, arrayType.getElementType(), TypeInfoFactory.UNKNOWN, object.size());
             }
             else {
                 // TODO: support map and struct
