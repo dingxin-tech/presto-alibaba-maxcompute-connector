@@ -13,10 +13,12 @@
  */
 package com.facebook.presto.maxcompute.utils;
 
+import com.aliyun.odps.type.ArrayTypeInfo;
 import com.aliyun.odps.type.CharTypeInfo;
 import com.aliyun.odps.type.DecimalTypeInfo;
 import com.aliyun.odps.type.TypeInfo;
 import com.aliyun.odps.type.VarcharTypeInfo;
+import com.facebook.presto.common.type.ArrayType;
 import com.facebook.presto.common.type.BigintType;
 import com.facebook.presto.common.type.BooleanType;
 import com.facebook.presto.common.type.CharType;
@@ -37,6 +39,8 @@ import com.facebook.presto.spi.PrestoException;
 
 public class TypeConvertUtils
 {
+    private TypeConvertUtils() {}
+
     /**
      * Convert MaxCompute data type to Presto data type.
      * <p>
@@ -121,10 +125,15 @@ public class TypeConvertUtils
             case BOOLEAN:
                 // boolean
                 return BooleanType.BOOLEAN;
+            case ARRAY:
+                // Block
+                ArrayTypeInfo arrayTypeInfo = (ArrayTypeInfo) odpsType;
+                return new ArrayType(toPrestoType(arrayTypeInfo.getElementTypeInfo()));
+            case MAP:
+            case STRUCT:
+                // TODO: support map and struct
             default:
                 throw new PrestoException(MaxComputeErrorCode.MAXCOMPUTE_CONNECTOR_ERROR, "unsupported type: " + odpsType.getTypeName());
         }
     }
-
-    private TypeConvertUtils() {}
 }

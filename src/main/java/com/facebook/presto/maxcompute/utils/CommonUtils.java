@@ -27,9 +27,6 @@ import java.io.Serializable;
 import java.util.Base64;
 import java.util.concurrent.Callable;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class CommonUtils
 {
     private static final Logger LOG = Logger.get(CommonUtils.class);

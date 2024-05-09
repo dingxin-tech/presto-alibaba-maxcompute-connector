@@ -36,9 +36,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class MaxComputeUtils
 {
     public static final Logger LOG = LoggerFactory.getLogger(MaxComputeUtils.class);
@@ -63,8 +60,8 @@ public class MaxComputeUtils
         Account account = new AliyunAccount(config.getAccessId(), config.getAccessKey());
         EnvironmentSettings.Builder builder = EnvironmentSettings.newBuilder().withServiceEndpoint(config.getEndPoint())
                 .withCredentials(Credentials.newBuilder().withAccount(account).build());
-        if (!StringUtils.isNullOrEmpty(config.getTunnelEndPoint())) {
-            builder.withTunnelEndpoint(config.getTunnelEndPoint());
+        if (!StringUtils.isNullOrEmpty(config.getQuotaName())) {
+            builder.withQuotaName(config.getQuotaName());
         }
         return builder.build();
     }
@@ -79,8 +76,9 @@ public class MaxComputeUtils
             LOG.info("project {} is support schema: {}", config.getProject(), flag);
             return flag;
         }
-        catch (OdpsException e) {
-            throw wrapOdpsException(e);
+        catch (Exception e) {
+            LOG.warn("get project {} schema flag error, default not support schema model, error message: {}", config.getProject(), e.getMessage());
+            return false;
         }
     }
 

@@ -66,12 +66,13 @@ import java.util.Map;
 
 import static com.facebook.presto.common.type.Decimals.MAX_SHORT_PRECISION;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class ArrowUtils
 {
+    private static final long MICROS_PER_MILLI = 1_000L;
+    private static final long NANOS_PER_MILLI = 1_000_000L;
     private static RootAllocator rootAllocator = new RootAllocator(Long.MAX_VALUE);
+
+    private ArrowUtils() {}
 
     public static RootAllocator getRootAllocator()
     {
@@ -114,7 +115,7 @@ public class ArrowUtils
             case TIMESTAMP_NTZ:
                 return new ArrowTimestampAccessor((TimeStampVector) vector);
             case ARRAY:
-                return new ArrowArrayAccessorForRecord((ListVector) vector, typeInfo);
+                return new ArrowArrayAccessorForBlock((ListVector) vector, typeInfo);
             case MAP:
                 return new ArrowMapAccessorForRecord((MapVector) vector, typeInfo);
             case STRUCT:
@@ -177,19 +178,18 @@ public class ArrowUtils
                 return convertToEpochMillis(((ArrowTimestampAccessor) dataAccessor).getType(),
                         ((ArrowTimestampAccessor) dataAccessor).getEpochTime(rowId));
             case ARRAY:
-                return ((ArrowArrayAccessorForRecord) dataAccessor).getArray(rowId);
+                return ((ArrowArrayAccessorForBlock) dataAccessor).getArray(rowId);
             case MAP:
                 return ((ArrowMapAccessorForRecord) dataAccessor).getMap(rowId);
             case STRUCT:
                 return ((ArrowStructAccessorForRecord) dataAccessor).getStruct(rowId);
+            case UNKNOWN:
+                return ((SimpleDataAccessor) dataAccessor).get(rowId);
             default:
                 throw new UnsupportedOperationException(
                         "Datatype not supported: " + typeInfo.getTypeName());
         }
     }
-
-    private static final long MICROS_PER_MILLI = 1_000L;
-    private static final long NANOS_PER_MILLI = 1_000_000L;
 
     private static long convertToEpochMillis(ArrowType.Timestamp timestampType, long epochTime)
     {
@@ -207,16 +207,17 @@ public class ArrowUtils
         }
     }
 
-    public static class ArrowArrayAccessorForRecord
+    public static class ArrowArrayAccessorForBlock
             extends ArrowArrayAccessor<List<Object>>
     {
         private final TypeInfo elementTypeInfo;
         private final ArrowVectorAccessor dataAccessor;
 
-        public ArrowArrayAccessorForRecord(ListVector vector, TypeInfo typeInfo)
+        public ArrowArrayAccessorForBlock(ListVector vector, TypeInfo typeInfo)
         {
             super(vector);
             this.elementTypeInfo = ((ArrayTypeInfo) typeInfo).getElementTypeInfo();
+
             this.dataAccessor =
                     createColumnVectorAccessor(vector.getDataVector(), elementTypeInfo);
         }
@@ -309,6 +310,4 @@ public class ArrowUtils
             }
         }
     }
-
-    private ArrowUtils() {}
 }

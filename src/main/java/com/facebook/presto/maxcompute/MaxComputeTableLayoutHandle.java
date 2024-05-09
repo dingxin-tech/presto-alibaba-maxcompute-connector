@@ -20,9 +20,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class MaxComputeTableLayoutHandle
         implements ConnectorTableLayoutHandle
 {

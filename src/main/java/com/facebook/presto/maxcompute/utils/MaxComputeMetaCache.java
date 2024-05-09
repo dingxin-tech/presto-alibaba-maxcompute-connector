@@ -24,14 +24,10 @@ import com.google.common.cache.LoadingCache;
 
 import static java.util.concurrent.TimeUnit.HOURS;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class MaxComputeMetaCache
 {
-    private LoadingCache<MaxComputeTableHandle, ConnectorTableMetadata> tableMetadataCache;
-
     private final Odps odps;
+    private LoadingCache<MaxComputeTableHandle, ConnectorTableMetadata> tableMetadataCache;
 
     public MaxComputeMetaCache(MaxComputeConfig config)
     {
@@ -47,16 +43,6 @@ public class MaxComputeMetaCache
                         return MaxComputeUtils.getTableMetadata(odps, tableHandle);
                     }
                 });
-    }
-
-    public ConnectorTableMetadata getTableMetadata(MaxComputeTableHandle tableHandle)
-    {
-        return get(tableMetadataCache, tableHandle);
-    }
-
-    public void writeTableMetadata(MaxComputeTableHandle tableHandle, ConnectorTableMetadata tableMetadata)
-    {
-        write(tableMetadataCache, tableHandle, tableMetadata);
     }
 
     private static CacheBuilder<Object, Object> newCacheBuilder(long expiresAfterWriteSec, long maximumSize)
@@ -87,5 +73,15 @@ public class MaxComputeMetaCache
         catch (Exception e) {
             // ignore
         }
+    }
+
+    public ConnectorTableMetadata getTableMetadata(MaxComputeTableHandle tableHandle)
+    {
+        return get(tableMetadataCache, tableHandle);
+    }
+
+    public void writeTableMetadata(MaxComputeTableHandle tableHandle, ConnectorTableMetadata tableMetadata)
+    {
+        write(tableMetadataCache, tableHandle, tableMetadata);
     }
 }

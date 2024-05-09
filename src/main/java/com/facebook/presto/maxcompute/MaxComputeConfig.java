@@ -24,31 +24,11 @@ public class MaxComputeConfig
     private String accessId;
     private String accessKey;
     private String endpoint;
-    private String tunnelEndpoint;
+    private String quotaName;
 
     public String getProject()
     {
         return project;
-    }
-
-    public String getAccessId()
-    {
-        return accessId;
-    }
-
-    public String getAccessKey()
-    {
-        return accessKey;
-    }
-
-    public String getEndPoint()
-    {
-        return endpoint;
-    }
-
-    public String getTunnelEndPoint()
-    {
-        return tunnelEndpoint;
     }
 
     @Config("odps.project.name")
@@ -58,11 +38,21 @@ public class MaxComputeConfig
         return this;
     }
 
+    public String getAccessId()
+    {
+        return accessId;
+    }
+
     @Config("odps.access.id")
     public MaxComputeConfig setAccessId(String accessId)
     {
         this.accessId = accessId;
         return this;
+    }
+
+    public String getAccessKey()
+    {
+        return accessKey;
     }
 
     @Config("odps.access.key")
@@ -72,6 +62,11 @@ public class MaxComputeConfig
         return this;
     }
 
+    public String getEndPoint()
+    {
+        return endpoint;
+    }
+
     @Config("odps.end.point")
     public MaxComputeConfig setEndPoint(String endpoint)
     {
@@ -79,10 +74,15 @@ public class MaxComputeConfig
         return this;
     }
 
-    @Config("odps.tunnel.end.point")
-    public MaxComputeConfig setTunnelEndPoint(String tunnelEndpoint)
+    public String getQuotaName()
     {
-        this.tunnelEndpoint = tunnelEndpoint;
+        return quotaName;
+    }
+
+    @Config("odps.quota.name")
+    public MaxComputeConfig setQuotaName(String quotaName)
+    {
+        this.quotaName = quotaName;
         return this;
     }
 }

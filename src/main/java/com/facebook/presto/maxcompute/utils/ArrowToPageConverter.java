@@ -16,7 +16,10 @@ package com.facebook.presto.maxcompute.utils;
 import com.aliyun.odps.Column;
 import com.aliyun.odps.table.arrow.accessor.ArrowVectorAccessor;
 import com.aliyun.odps.type.TypeInfo;
+import com.aliyun.odps.type.TypeInfoFactory;
 import com.facebook.presto.common.PageBuilder;
+import com.facebook.presto.common.block.ArrayBlockBuilder;
+import com.facebook.presto.common.block.Block;
 import com.facebook.presto.common.block.BlockBuilder;
 import com.facebook.presto.common.type.ArrayType;
 import com.facebook.presto.common.type.Type;
@@ -25,32 +28,22 @@ import com.facebook.presto.maxcompute.MaxComputeErrorCode;
 import com.facebook.presto.spi.ColumnHandle;
 import com.facebook.presto.spi.PrestoException;
 import io.airlift.slice.Slice;
-import org.apache.arrow.memory.ArrowBuf;
-import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.vector.FieldVector;
 import org.apache.arrow.vector.VectorSchemaRoot;
-import org.apache.arrow.vector.complex.ListVector;
-import org.apache.arrow.vector.util.TransferPair;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
-import static org.apache.arrow.vector.complex.BaseRepeatedValueVector.OFFSET_WIDTH;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class ArrowToPageConverter
 {
-    private final BufferAllocator allocator;
     private final Map<String, TypeInfo> odpsTypeMap;
     private final List<ColumnHandle> requireColumns;
 
-    public ArrowToPageConverter(BufferAllocator allocator, List<ColumnHandle> requireColumns, List<Column> schema)
+    public ArrowToPageConverter(List<ColumnHandle> requireColumns, List<Column> schema)
     {
-        this.allocator = requireNonNull(allocator, "allocator is null");
         this.requireColumns = requireNonNull(requireColumns, "requireColumns is null");
 
         odpsTypeMap = requireNonNull(schema, "schema is null").stream().collect(Collectors.toMap(Column::getName, Column::getTypeInfo));
@@ -93,33 +86,18 @@ public class ArrowToPageConverter
             else if (javaType == Slice.class) {
                 prestoType.writeSlice(blockBuilder, (Slice) data);
             }
-            else {
-                // TODO: support complex type
-                throw new PrestoException(MaxComputeErrorCode.MAXCOMPUTE_CONNECTOR_ERROR, "Unsupported type: " + javaType);
+            else if (javaType == Block.class) {
+                if (prestoType instanceof ArrayType) {
+                    ArrayType arrayType = (ArrayType) prestoType;
+                    ArrayBlockBuilder arrayBlockBuilder = (ArrayBlockBuilder) blockBuilder;
+                    BlockBuilder elementBlockBuilder = arrayBlockBuilder.getElementBlockBuilder();
+                    List object = (List) data;
+                    transferData(new SimpleDataAccessor(object), elementBlockBuilder, arrayType.getElementType(), TypeInfoFactory.UNKNOWN, object.size());
+                }
             }
-        }
-    }
-
-    private void writeArrayBlock(BlockBuilder output, ArrayType arrayType, FieldVector vector, int index)
-    {
-        Type elementType = arrayType.getElementType();
-        ArrowBuf offsetBuffer = vector.getOffsetBuffer();
-        int start = offsetBuffer.getInt((long) index * OFFSET_WIDTH);
-        int end = offsetBuffer.getInt((long) (index + 1) * OFFSET_WIDTH);
-        FieldVector innerVector = ((ListVector) vector).getDataVector();
-        TransferPair transferPair = innerVector.getTransferPair(allocator);
-        transferPair.splitAndTransfer(start, end - start);
-
-        try (FieldVector sliced = (FieldVector) transferPair.getTo()) {
-            int valueCount = sliced.getValueCount();
-            // Iterate over the elements in the sliced vector and add each one to the output block builder
-            for (int i = 0; i < valueCount; i++) {
-                if (sliced.isNull(i)) {
-                    output.appendNull();
-                }
-                else {
-                    // Convert the type and write the element to the output block builder
-                }
+            else {
+                // TODO: support map and struct
+                throw new PrestoException(MaxComputeErrorCode.MAXCOMPUTE_CONNECTOR_ERROR, "Unsupported type: " + javaType);
             }
         }
     }

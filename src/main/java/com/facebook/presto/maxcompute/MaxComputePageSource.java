@@ -41,9 +41,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.Objects.requireNonNull;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class MaxComputePageSource
         implements ConnectorPageSource
 {
@@ -69,7 +66,7 @@ public class MaxComputePageSource
 
         TableSchema schema = odps.tables().get(tableHandle.getProjectId(), tableHandle.getSchemaName(), tableHandle.getTableName()).getSchema();
         this.allocator = ArrowUtils.getRootAllocator().newChildAllocator(UUID.randomUUID().toString(), 1024, Long.MAX_VALUE);
-        this.arrowToPageConverter = new ArrowToPageConverter(allocator, requireColumns, schema.getColumns());
+        this.arrowToPageConverter = new ArrowToPageConverter(requireColumns, schema.getColumns());
         this.pageBuilder = new PageBuilder(requireColumns.stream()
                 .map(col -> ((MaxComputeColumnHandle) col).getType())
                 .collect(toImmutableList()));

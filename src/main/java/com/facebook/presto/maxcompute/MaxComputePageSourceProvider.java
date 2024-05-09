@@ -28,9 +28,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * @author dingxin (zhangdingxin.zdx@alibaba-inc.com)
- */
 public class MaxComputePageSourceProvider
         implements ConnectorPageSourceProvider
 {
