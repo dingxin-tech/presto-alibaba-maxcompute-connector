@@ -17,6 +17,11 @@ Before using the MaxCompute connector, please ensure the following conditions ar
 - (Optional) Schema activation: Enable Schema mode to use different directories in Presto. Refer
   to [How to Enable Schema Model in MaxCompute](https://help.aliyun.com/zh/maxcompute/user-guide/schema-related-operations) for more information.
 
+### Obtain the Connector JAR
+
+To use the MaxCompute connector, you first need to obtain the JAR file by building the repository. Use the Maven command `mvn clean package` to build the project and generate the
+JAR. Once built, place the JAR file into the `plugin/maxcompute` directory within your Presto installation.
+
 ### Configuration
 
 Before configuring the MaxCompute connector, please ensure you have prepared all the necessary information associated with your MaxCompute project, including project name, access
