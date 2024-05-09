@@ -68,6 +68,10 @@ public class MaxComputeMetadata
     @Override
     public boolean schemaExists(ConnectorSession session, String schemaName)
     {
+        if (!supportSchema || schemaName.equals(DEFAULT_SCHEMA)) {
+            // non schema model ignore schema
+            return true;
+        }
         try {
             return odps.schemas().exists(schemaName);
         }

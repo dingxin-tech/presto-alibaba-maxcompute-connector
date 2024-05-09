@@ -63,7 +63,7 @@ public class MaxComputeUtils
         Account account = new AliyunAccount(config.getAccessId(), config.getAccessKey());
         EnvironmentSettings.Builder builder = EnvironmentSettings.newBuilder().withServiceEndpoint(config.getEndPoint())
                 .withCredentials(Credentials.newBuilder().withAccount(account).build());
-        if (StringUtils.isNullOrEmpty(config.getTunnelEndPoint())) {
+        if (!StringUtils.isNullOrEmpty(config.getTunnelEndPoint())) {
             builder.withTunnelEndpoint(config.getTunnelEndPoint());
         }
         return builder.build();

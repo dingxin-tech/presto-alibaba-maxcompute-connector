@@ -134,16 +134,16 @@ public class ArrowUtils
             case BOOLEAN:
                 return ((ArrowBitAccessor) dataAccessor).getBoolean(rowId);
             case TINYINT:
-                return ((ArrowTinyIntAccessor) dataAccessor).getByte(rowId);
+                return ((Number) ((ArrowTinyIntAccessor) dataAccessor).getByte(rowId)).longValue();
             case SMALLINT:
-                return ((ArrowSmallIntAccessor) dataAccessor).getShort(rowId);
+                return ((Number) ((ArrowSmallIntAccessor) dataAccessor).getShort(rowId)).longValue();
             case INT:
-                return ((ArrowIntAccessor) dataAccessor).getInt(rowId);
+                return ((Number) ((ArrowIntAccessor) dataAccessor).getInt(rowId)).longValue();
             case BIGINT:
                 return ((ArrowBigIntAccessor) dataAccessor).getLong(rowId);
             case FLOAT:
                 // return int bits
-                return Float.floatToIntBits(((ArrowFloat4Accessor) dataAccessor).getFloat(rowId));
+                return ((Number) Float.floatToIntBits(((ArrowFloat4Accessor) dataAccessor).getFloat(rowId))).longValue();
             case DOUBLE:
                 return ((ArrowFloat8Accessor) dataAccessor).getDouble(rowId);
             case DECIMAL:
@@ -169,7 +169,7 @@ public class ArrowUtils
                 return Slices.wrappedBuffer(((ArrowVarBinaryAccessor) dataAccessor).getBinary(rowId));
             case DATE:
                 // return epoch days
-                return ((ArrowDateDayAccessor) dataAccessor).getEpochDay(rowId);
+                return ((Number) ((ArrowDateDayAccessor) dataAccessor).getEpochDay(rowId)).longValue();
             case DATETIME:
             case TIMESTAMP:
             case TIMESTAMP_NTZ:

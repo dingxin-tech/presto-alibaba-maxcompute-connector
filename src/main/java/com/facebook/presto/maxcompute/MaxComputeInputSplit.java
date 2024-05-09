@@ -44,7 +44,7 @@ public class MaxComputeInputSplit
 
     public MaxComputeInputSplit(InputSplit inputSplit)
     {
-        sessionId = inputSplit.getSessionId();
+        sessionId = requireNonNull(inputSplit, "input split is null").getSessionId();
         if (inputSplit instanceof IndexedInputSplit) {
             splitIndex = ((IndexedInputSplit) inputSplit).getSplitIndex();
             startIndex = -1L;

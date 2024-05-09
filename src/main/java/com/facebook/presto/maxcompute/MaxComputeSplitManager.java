@@ -80,7 +80,7 @@ public class MaxComputeSplitManager
             }
 
             TableBatchReadSession readSession = tableReadSessionBuilder.buildBatchReadSession();
-            List<MaxComputeSplit> splits = Arrays.asList(readSession.getInputSplitAssigner().getAllSplits()).stream().map(e -> {
+            List<MaxComputeSplit> splits = Arrays.stream(readSession.getInputSplitAssigner().getAllSplits()).map(e -> {
                 MaxComputeInputSplit maxComputeInputSplit = new MaxComputeInputSplit(e);
                 return new MaxComputeSplit(maxComputeInputSplit, readSession, Collections.emptyMap());
             }).collect(Collectors.toList());

@@ -40,7 +40,7 @@ public class MaxComputeSplit
 
     @JsonCreator
     public MaxComputeSplit(
-            @JsonProperty("inputSplit") MaxComputeInputSplit split,
+            @JsonProperty("split") MaxComputeInputSplit split,
             @JsonProperty("session") String session,
             @JsonProperty("properties") Map<String, String> properties)
     {
@@ -49,11 +49,11 @@ public class MaxComputeSplit
         this.properties = requireNonNull(properties, "properties is null");
     }
 
-    public MaxComputeSplit(MaxComputeInputSplit splits, TableBatchReadSession session, Map<String, String> properties)
+    public MaxComputeSplit(MaxComputeInputSplit split, TableBatchReadSession session, Map<String, String> properties)
     {
-        this.split = splits;
-        this.session = getSerializeSession(session);
-        this.properties = properties;
+        this.split = requireNonNull(split, "split is null");
+        this.session = getSerializeSession(requireNonNull(session, "session is null"));
+        this.properties = requireNonNull(properties, "properties is null");
     }
 
     @JsonProperty
