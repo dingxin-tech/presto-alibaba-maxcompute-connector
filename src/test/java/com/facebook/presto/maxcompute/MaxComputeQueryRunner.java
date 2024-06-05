@@ -18,7 +18,15 @@ import com.facebook.airlift.log.Logging;
 import com.facebook.presto.Session;
 import com.facebook.presto.tests.DistributedQueryRunner;
 import com.google.common.collect.ImmutableMap;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,8 +37,11 @@ public class MaxComputeQueryRunner
 {
     private MaxComputeQueryRunner() {}
 
+    private static final DockerImageName MAXCOMPUTE_IMAGE =
+            DockerImageName.parse("maxcompute/maxcompute-emulator:v0.0.4");
+
     public static void main(String[] args)
-            throws InterruptedException
+            throws Exception
     {
         Logging.initialize();
         Logger log = Logger.get(MaxComputeQueryRunner.class);
@@ -50,9 +61,24 @@ public class MaxComputeQueryRunner
         log.info("\n====\n%s\n====", queryRunner.getCoordinator().getBaseUrl());
     }
 
+    public static String MAXCOMPUTE_EMULATOR_ENDPOINT;
+
     static DistributedQueryRunner createMaxComputeQueryRunner(Optional<String> serverPort)
             throws Exception
     {
+        GenericContainer<?> maxcompute =
+                new GenericContainer<>(MAXCOMPUTE_IMAGE)
+                        .withExposedPorts(8080)
+                        .waitingFor(
+                                Wait.forLogMessage(".*Started MaxcomputeEmulatorApplication.*\\n", 1))
+                        .withLogConsumer(frame -> System.out.print(frame.getUtf8String()));
+        maxcompute.start();
+        Thread.sleep(1000);
+
+        String endpoint = getEndpoint(maxcompute);
+        MAXCOMPUTE_EMULATOR_ENDPOINT = endpoint;
+        sendPOST(endpoint + "/init", endpoint);
+
         Map<String, String> serverConfig = serverPort
                 .map(s -> ImmutableMap.of("http-server.http.port", s))
                 .orElse(ImmutableMap.of());
@@ -61,7 +87,7 @@ public class MaxComputeQueryRunner
         catalogConfig.put("odps.access.id", "id");
         catalogConfig.put("odps.access.key", "key");
         catalogConfig.put("odps.project.name", "project");
-        catalogConfig.put("odps.end.point", "http://service-corp.odps.aliyun-inc.com/api");
+        catalogConfig.put("odps.end.point", endpoint);
 
         Session session = testSessionBuilder().setCatalog("maxcompute").setSchema("maxcompute").build();
         DistributedQueryRunner queryRunner = DistributedQueryRunner.builder(session).setExtraProperties(serverConfig).build();
@@ -70,5 +96,43 @@ public class MaxComputeQueryRunner
         queryRunner.createCatalog("maxcompute", "maxcompute", catalogConfig);
 
         return queryRunner;
+    }
+
+    private static String getEndpoint(GenericContainer<?> maxcompute)
+    {
+        String ip;
+        if (maxcompute.getHost().equals("localhost")) {
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            }
+            catch (UnknownHostException e) {
+                ip = "127.0.0.1";
+            }
+        }
+        else {
+            ip = maxcompute.getHost();
+        }
+        return "http://" + ip + ":" + maxcompute.getFirstMappedPort();
+    }
+
+    static void sendPOST(String postUrl, String postData)
+            throws Exception
+    {
+        URL url = new URL(postUrl);
+
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        httpURLConnection.setRequestMethod("POST");
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setRequestProperty("Content-Type", "application/json");
+        httpURLConnection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
+
+        try (OutputStream outputStream = httpURLConnection.getOutputStream()) {
+            outputStream.write(postData.getBytes("UTF-8"));
+            outputStream.flush();
+        }
+        int responseCode = httpURLConnection.getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            throw new RuntimeException("POST request failed with response code: " + responseCode);
+        }
     }
 }
