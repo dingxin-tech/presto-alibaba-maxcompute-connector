@@ -17,7 +17,6 @@ import com.aliyun.odps.Column;
 import com.aliyun.odps.table.arrow.accessor.ArrowVectorAccessor;
 import com.aliyun.odps.type.TypeInfo;
 import com.aliyun.odps.type.TypeInfoFactory;
-import com.facebook.airlift.log.Logger;
 import com.facebook.presto.common.PageBuilder;
 import com.facebook.presto.common.block.ArrayBlockBuilder;
 import com.facebook.presto.common.block.Block;
@@ -42,19 +41,24 @@ public class ArrowToPageConverter
 {
     private final Map<String, TypeInfo> odpsTypeMap;
     private final List<ColumnHandle> requireColumns;
+    private final Map<String, String> columnNameConvertMap;
 
     public ArrowToPageConverter(List<ColumnHandle> requireColumns, List<Column> schema)
     {
+        this.odpsTypeMap = requireNonNull(schema, "schema is null").stream().collect(Collectors.toMap(Column::getName, Column::getTypeInfo));
         this.requireColumns = requireNonNull(requireColumns, "requireColumns is null");
 
-        odpsTypeMap = requireNonNull(schema, "schema is null").stream().collect(Collectors.toMap(Column::getName, Column::getTypeInfo));
+        // It seems that Presto is not case-sensitive (all columns are automatically converted to lowercase), but MaxCompute is,
+        // so we use columnNameConvertMap to do the conversion to convert the lowercase column names in the ColumnHandle to the correct column names.
+        this.columnNameConvertMap = schema.stream().collect(Collectors.toMap(c -> c.getName().toLowerCase(), Column::getName));
     }
 
     public void convert(PageBuilder pageBuilder, VectorSchemaRoot vectorSchemaRoot)
     {
         pageBuilder.declarePositions(vectorSchemaRoot.getRowCount());
         for (int column = 0; column < requireColumns.size(); column++) {
-            String filedName = ((MaxComputeColumnHandle) requireColumns.get(column)).getName();
+            String requireColumnName = ((MaxComputeColumnHandle) requireColumns.get(column)).getName();
+            String filedName = columnNameConvertMap.getOrDefault(requireColumnName, requireColumnName);
             FieldVector vector = vectorSchemaRoot.getVector(filedName);
 
             ArrowVectorAccessor dataAccessor = ArrowUtils.createColumnVectorAccessor(vector, odpsTypeMap.get(filedName));

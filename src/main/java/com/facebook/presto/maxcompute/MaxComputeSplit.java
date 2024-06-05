@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalLong;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
 import static java.util.Objects.requireNonNull;
 
 public class MaxComputeSplit
