@@ -50,7 +50,7 @@ public class MaxComputeQueryRunner
         try {
             //noinspection resource
             queryRunner =
-                    createMaxComputeQueryRunner(Optional.of("8080"));
+                    createMaxComputeEmulatorQueryRunner(Optional.of("8080"));
         }
         catch (Throwable t) {
             log.error(t);
@@ -63,7 +63,29 @@ public class MaxComputeQueryRunner
 
     public static String MAXCOMPUTE_EMULATOR_ENDPOINT;
 
-    static DistributedQueryRunner createMaxComputeQueryRunner(Optional<String> serverPort)
+    static DistributedQueryRunner createMaxComputeQueryRunner(Optional<String> serverPort, String endpoint, String accessId, String accessKey, String project)
+            throws Exception
+    {
+        Map<String, String> serverConfig = serverPort
+                .map(s -> ImmutableMap.of("http-server.http.port", s))
+                .orElse(ImmutableMap.of());
+
+        Map<String, String> catalogConfig = new HashMap<>();
+        catalogConfig.put("odps.access.id", accessId);
+        catalogConfig.put("odps.access.key", accessKey);
+        catalogConfig.put("odps.project.name", project);
+        catalogConfig.put("odps.end.point", endpoint);
+
+        Session session = testSessionBuilder().setCatalog("maxcompute").setSchema("default").build();
+        DistributedQueryRunner queryRunner = DistributedQueryRunner.builder(session).setExtraProperties(serverConfig).build();
+
+        queryRunner.installPlugin(new MaxComputePlugin());
+        queryRunner.createCatalog("maxcompute", "maxcompute", catalogConfig);
+
+        return queryRunner;
+    }
+
+    static DistributedQueryRunner createMaxComputeEmulatorQueryRunner(Optional<String> serverPort)
             throws Exception
     {
         GenericContainer<?> maxcompute =
@@ -73,29 +95,14 @@ public class MaxComputeQueryRunner
                                 Wait.forLogMessage(".*Started MaxcomputeEmulatorApplication.*\\n", 1))
                         .withLogConsumer(frame -> System.out.print(frame.getUtf8String()));
         maxcompute.start();
+        // wait one seconds for maxcompute to start completely
         Thread.sleep(1000);
 
         String endpoint = getEndpoint(maxcompute);
         MAXCOMPUTE_EMULATOR_ENDPOINT = endpoint;
         sendPOST(endpoint + "/init", endpoint);
 
-        Map<String, String> serverConfig = serverPort
-                .map(s -> ImmutableMap.of("http-server.http.port", s))
-                .orElse(ImmutableMap.of());
-
-        Map<String, String> catalogConfig = new HashMap<>();
-        catalogConfig.put("odps.access.id", "id");
-        catalogConfig.put("odps.access.key", "key");
-        catalogConfig.put("odps.project.name", "project");
-        catalogConfig.put("odps.end.point", endpoint);
-
-        Session session = testSessionBuilder().setCatalog("maxcompute").setSchema("maxcompute").build();
-        DistributedQueryRunner queryRunner = DistributedQueryRunner.builder(session).setExtraProperties(serverConfig).build();
-
-        queryRunner.installPlugin(new MaxComputePlugin());
-        queryRunner.createCatalog("maxcompute", "maxcompute", catalogConfig);
-
-        return queryRunner;
+        return createMaxComputeQueryRunner(serverPort, endpoint, "mock", "mock", "emulator");
     }
 
     private static String getEndpoint(GenericContainer<?> maxcompute)

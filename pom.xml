@@ -10,7 +10,7 @@
     <description>Presto - MaxCompute Connector</description>
 
     <properties>
-        <odps.sdk.version>0.48.4-public</odps.sdk.version>
+        <odps.sdk.version>0.48.5-public</odps.sdk.version>
         <airlift.version>0.209</airlift.version>
         <presto.version>0.287</presto.version>
 

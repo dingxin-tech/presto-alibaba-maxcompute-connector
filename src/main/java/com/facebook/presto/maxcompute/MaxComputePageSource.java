@@ -69,7 +69,7 @@ public class MaxComputePageSource
         LOG.info(String.format("create maxcompute page source, requireColumns: %s, split: %s", requireColumns, split));
         TableSchema schema = odps.tables().get(tableHandle.getProjectId(), tableHandle.getSchemaName(), tableHandle.getTableName()).getSchema();
         this.allocator = ArrowUtils.getRootAllocator().newChildAllocator(UUID.randomUUID().toString(), 1024, Long.MAX_VALUE);
-        this.arrowToPageConverter = new ArrowToPageConverter(requireColumns, schema.getColumns());
+        this.arrowToPageConverter = new ArrowToPageConverter(requireColumns, schema.getAllColumns());
         this.pageBuilder = new PageBuilder(requireColumns.stream()
                 .map(col -> ((MaxComputeColumnHandle) col).getType())
                 .collect(toImmutableList()));

@@ -39,15 +39,13 @@ public class ReadNonPartitionedTableTest
     public void testReadNonPartitionedTable()
             throws Exception
     {
-        DistributedQueryRunner queryRunner = MaxComputeQueryRunner.createMaxComputeQueryRunner(Optional.of("8080"));
+        DistributedQueryRunner queryRunner = MaxComputeQueryRunner.createMaxComputeEmulatorQueryRunner(Optional.of("8080"));
 
         prepareTestTable();
-        MaterializedResult result = queryRunner.execute("select * from " + TEST_TABLE);
+        MaterializedResult result = queryRunner.execute("select * from " + TEST_TABLE + " where id = 1");
         int rowCount = result.getRowCount();
         System.out.println(rowCount);
         Assert.assertEquals(10000, rowCount);
-
-        //System.exit(0);
     }
 
     void prepareTestTable()
@@ -58,6 +56,7 @@ public class ReadNonPartitionedTableTest
         odps.setEndpoint(MaxComputeQueryRunner.MAXCOMPUTE_EMULATOR_ENDPOINT);
         odps.setDefaultProject("maxcompute_emulator");
 
+        odps.tables().delete("maxcompute_emulator", TEST_TABLE);
         odps.tables().newTableCreator("maxcompute_emulator", TEST_TABLE,
                 TableSchema.builder().withColumn(Column.newBuilder("id", TypeInfoFactory.BIGINT).primaryKey().build())
                         .withStringColumn("name").build()).ifNotExists().transactionTable().create();
