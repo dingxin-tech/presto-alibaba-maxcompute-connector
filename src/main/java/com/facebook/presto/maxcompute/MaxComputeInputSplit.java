@@ -31,7 +31,9 @@ public class MaxComputeInputSplit
     private Long numRecord;
 
     @JsonCreator
-    public MaxComputeInputSplit(@JsonProperty("sessionId") String sessionId, @JsonProperty("splitIndex") Integer splitIndex,
+    public MaxComputeInputSplit(
+            @JsonProperty("sessionId") String sessionId, 
+            @JsonProperty("splitIndex") Integer splitIndex,
             @JsonProperty("startIndex") Long startIndex, @JsonProperty("numRecord") Long numRecord)
     {
         this.sessionId = requireNonNull(sessionId, "schema name is null");
