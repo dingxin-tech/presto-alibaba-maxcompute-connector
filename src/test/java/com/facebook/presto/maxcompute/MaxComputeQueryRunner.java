@@ -38,7 +38,7 @@ public class MaxComputeQueryRunner
     private MaxComputeQueryRunner() {}
 
     private static final DockerImageName MAXCOMPUTE_IMAGE =
-            DockerImageName.parse("maxcompute/maxcompute-emulator:v0.0.4");
+            DockerImageName.parse("maxcompute/maxcompute-emulator:v0.0.6");
 
     public static void main(String[] args)
             throws Exception
