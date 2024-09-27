@@ -10,7 +10,7 @@ integration and analysis between MaxCompute and other systems, such as Hive.
 Before using the MaxCompute connector, ensure the following conditions are met:
 
 - Access permissions: Ensure you have valid access rights to a MaxCompute project and that you have obtained the necessary authentication credentials.
-- Network setup: For stable data transmission, the use of Aliyun VPC network is recommended. Check out
+- Network setup: For stable data transmission, the use of Aliyun VPC network is recommended. See
   the [MaxCompute Network Configuration Guide](https://help.aliyun.com/zh/maxcompute/user-guide/network-connection-process) for more information.
 - Resource group configuration: Possession of an exclusive Tunnel resource group is required (although MaxCompute currently allows access to shared resource groups, this could
   change at any time). [Exclusive resource group](https://help.aliyun.com/zh/maxcompute/user-guide/purchase-and-use-exclusive-resource-groups-for-dts).
