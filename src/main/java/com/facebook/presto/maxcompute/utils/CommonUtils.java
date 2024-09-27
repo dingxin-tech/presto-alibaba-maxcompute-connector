@@ -14,22 +14,18 @@
 
 package com.facebook.presto.maxcompute.utils;
 
-import com.facebook.airlift.log.Logger;
 import com.facebook.presto.maxcompute.MaxComputeErrorCode;
 import com.facebook.presto.spi.PrestoException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Base64;
-import java.util.concurrent.Callable;
 
 public class CommonUtils
 {
-    private static final Logger LOG = Logger.get(CommonUtils.class);
 
     private CommonUtils() {}
 
@@ -57,31 +53,6 @@ public class CommonUtils
         }
         catch (Exception e) {
             throw new PrestoException(MaxComputeErrorCode.MAXCOMPUTE_CONNECTOR_ERROR, "deserialize object error", e);
-        }
-    }
-
-    public static <T> T executeWithRetry(Callable<T> callable, int maxRetries, long retryDelay)
-            throws IOException
-    {
-        int attempt = 0;
-        while (true) {
-            try {
-                return callable.call();
-            }
-            catch (Exception e) {
-                attempt++;
-                if (attempt > maxRetries) {
-                    throw new IOException("Failed after retries", e);
-                }
-                try {
-                    LOG.warn("Retrying after exception: " + e.getMessage(), e);
-                    Thread.sleep(retryDelay);
-                }
-                catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Retry interrupted", ie);
-                }
-            }
         }
     }
 }
