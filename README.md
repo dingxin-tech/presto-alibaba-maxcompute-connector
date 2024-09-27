@@ -44,7 +44,7 @@ odps.quota.name=<Your MaxCompute Exclusive Resource Group Name>
 ```
 
 Replace `<Your MaxCompute Project Name>`, `<Your Alibaba Cloud Access ID>`, `<Your Alibaba Cloud Access Key>`, `<Your MaxCompute Service Endpoint>`,
-and `<Your MaxCompute Exclusive Resource Group Name>` with the actual values for your MaxCompute environment.
+and `<Your MaxCompute Exclusive Resource Group Name>` with the values for your MaxCompute environment.
 
 ### Accessing Multiple MaxCompute Projects
 
