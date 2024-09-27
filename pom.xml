@@ -10,7 +10,7 @@
     <description>Presto - MaxCompute Connector</description>
 
     <properties>
-        <odps.sdk.version>0.48.5-public</odps.sdk.version>
+        <odps.sdk.version>0.49.0-public</odps.sdk.version>
         <airlift.version>0.209</airlift.version>
         <presto.version>0.287</presto.version>
 
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>26.0-jre</version>
+            <version>33.3.1-jre</version>
         </dependency>
 
         <dependency>
