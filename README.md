@@ -58,7 +58,7 @@ file:
 
 ### Data Type Mapping
 
-When using the MaxCompute connector, MaxCompute's data types will be mapped to Presto's data types. The table below shows this mapping relationship and its corresponding Presto
+When using the MaxCompute connector, MaxCompute's data types are mapped to Presto's data types. The table below shows this mapping relationship and its corresponding Presto
 types:
 
 | MaxCompute Data Type | Presto Data Type |
