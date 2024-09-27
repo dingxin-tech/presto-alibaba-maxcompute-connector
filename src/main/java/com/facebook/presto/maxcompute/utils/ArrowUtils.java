@@ -227,15 +227,10 @@ public class ArrowUtils
         protected List<Object> getArrayData(int offset, int length)
         {
             List<Object> list = new ArrayList<>();
-            try {
-                for (int i = 0; i < length; i++) {
-                    list.add(getData(dataAccessor, elementTypeInfo, offset + i));
-                }
-                return list;
+            for (int i = 0; i < length; i++) {
+                list.add(getData(dataAccessor, elementTypeInfo, offset + i));
             }
-            catch (Exception e) {
-                throw new RuntimeException("Could not get the array", e);
-            }
+            return list;
         }
     }
 
@@ -263,16 +258,11 @@ public class ArrowUtils
         protected Map<Object, Object> getMapData(int offset, int numElements)
         {
             Map<Object, Object> map = new HashMap<>();
-            try {
-                for (int i = 0; i < numElements; i++) {
-                    map.put(getData(keyAccessor, keyTypeInfo, offset + i),
-                            getData(valueAccessor, valueTypeInfo, offset + i));
-                }
-                return map;
+            for (int i = 0; i < numElements; i++) {
+                map.put(getData(keyAccessor, keyTypeInfo, offset + i),
+                        getData(valueAccessor, valueTypeInfo, offset + i));
             }
-            catch (Exception e) {
-                throw new RuntimeException("Could not get the map", e);
-            }
+            return map;
         }
     }
 
@@ -300,15 +290,10 @@ public class ArrowUtils
         public Struct getStruct(int rowId)
         {
             List<Object> values = new ArrayList<>();
-            try {
-                for (int i = 0; i < childAccessors.length; i++) {
-                    values.add(getData(childAccessors[i], childTypeInfos.get(i), rowId));
-                }
-                return new SimpleStruct((StructTypeInfo) structTypeInfo, values);
+            for (int i = 0; i < childAccessors.length; i++) {
+                values.add(getData(childAccessors[i], childTypeInfos.get(i), rowId));
             }
-            catch (Exception e) {
-                throw new RuntimeException("Could not get the struct", e);
-            }
+            return new SimpleStruct((StructTypeInfo) structTypeInfo, values);
         }
     }
 }
