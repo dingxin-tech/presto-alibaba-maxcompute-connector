@@ -54,7 +54,7 @@ file:
 
 - `sales.properties` for the sales project.
 - `analytics.properties` for the analysis project.
-  With this setup, `sales` and `analytics` directories will be created in Presto respectively.
+  With this setup, `sales` and `analytics` catalogs will be created in Presto respectively.
 
 ### Data Type Mapping
 
