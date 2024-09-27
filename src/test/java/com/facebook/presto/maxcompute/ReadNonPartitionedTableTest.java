@@ -26,8 +26,10 @@ import com.aliyun.odps.tunnel.streams.UpsertStream;
 import com.aliyun.odps.type.TypeInfoFactory;
 import com.facebook.presto.testing.MaterializedResult;
 import com.facebook.presto.tests.DistributedQueryRunner;
+import com.google.common.collect.ImmutableList;
 import org.junit.Assert;
 import org.junit.Test;
+import org.testcontainers.shaded.com.google.errorprone.annotations.Immutable;
 
 import java.util.Optional;
 
@@ -58,8 +60,8 @@ public class ReadNonPartitionedTableTest
 
         odps.tables().delete("maxcompute_emulator", TEST_TABLE);
         odps.tables().newTableCreator("maxcompute_emulator", TEST_TABLE,
-                TableSchema.builder().withColumn(Column.newBuilder("id", TypeInfoFactory.BIGINT).primaryKey().build())
-                        .withStringColumn("name").build()).ifNotExists().transactionTable().create();
+                TableSchema.builder().withColumn(Column.newBuilder("id", TypeInfoFactory.BIGINT).notNull().build())
+                        .withStringColumn("name").build()).ifNotExists().withPrimaryKeys(ImmutableList.of("id")).transactionTable().create();
 
         TableTunnel.UpsertSession session = odps.tableTunnel().buildUpsertSession("project", TEST_TABLE).build();
         UpsertStream stream = session.buildUpsertStream().setCompressOption(new CompressOption(
