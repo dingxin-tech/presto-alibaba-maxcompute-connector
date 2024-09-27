@@ -1,6 +1,6 @@
 # MaxCompute Connector
 
-The MaxCompute connector enables direct querying and processing of data stored in the MaxCompute data warehouse. This connector is particularly useful for implementing data
+The MaxCompute connector enables direct querying and processing of data stored in the MaxCompute data warehouse. This connector is useful for implementing data
 integration and analysis between MaxCompute and other systems, such as Hive.
 
 ## MaxCompute Connector Setup
