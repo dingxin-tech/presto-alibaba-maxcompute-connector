@@ -48,7 +48,7 @@ and `<Your MaxCompute Exclusive Resource Group Name>` with the values for your M
 
 ### Accessing Multiple MaxCompute Projects
 
-To access multiple MaxCompute projects simultaneously, please create separate configuration files for each project. For example, if you have two projects, one for "sales" (`sales`)
+To access multiple MaxCompute projects simultaneously, create separate configuration files for each project. For example, if you have two projects, one for "sales" (`sales`)
 and another for "analysis" (`analytics`), then you can create `sales.properties` and `analytics.properties` configuration files. Specify a different `odps.project.name` in each
 file:
 
