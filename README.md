@@ -7,7 +7,7 @@ integration and analysis between MaxCompute and other systems, such as Hive.
 
 ### Prerequisites
 
-Before using the MaxCompute connector, please ensure the following conditions are met:
+Before using the MaxCompute connector, ensure the following conditions are met:
 
 - Access permissions: Ensure you have valid access rights to a MaxCompute project and that you have obtained the necessary authentication credentials.
 - Network setup: For stable data transmission, the use of Aliyun VPC network is recommended. Check out
