@@ -26,6 +26,7 @@ JAR. Once built, place the JAR file into the `plugin/maxcompute` directory withi
 
 Before configuring the MaxCompute connector, please ensure you have prepared all the necessary information associated with your MaxCompute project, including project name, access
 ID, access key, and resource group name.
+
 1. Create a configuration file (for example, `maxcompute.properties`) in Presto's `etc/catalog` directory:
 
 ```properties
