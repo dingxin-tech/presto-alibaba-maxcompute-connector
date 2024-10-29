@@ -19,7 +19,7 @@ Before using the MaxCompute connector, ensure the following conditions are met:
 
 ### Obtain the Connector JAR
 
-To use the MaxCompute connector, you first need to obtain the JAR file by building the repository. Use the Maven command `mvn clean package` to build the project and generate the
+Obtain the JAR file by building the repository. Use the Maven command `mvn clean package` to build the project and generate the
 JAR. Once built, place the JAR file into the `plugin/maxcompute` directory within your Presto installation.
 
 ### Configuration
