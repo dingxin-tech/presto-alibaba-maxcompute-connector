@@ -13,7 +13,7 @@ Before using the MaxCompute connector, ensure the following conditions are met:
 - Network setup: For stable data transmission, the use of Aliyun VPC network is recommended. See
   the [MaxCompute Network Configuration Guide](https://help.aliyun.com/zh/maxcompute/user-guide/network-connection-process) for more information.
 - Resource group configuration: Possession of an exclusive Tunnel resource group is required. Note: MaxCompute currently allows access to shared resource groups, but this could
-  change at any time). [Exclusive resource group](https://help.aliyun.com/zh/maxcompute/user-guide/purchase-and-use-exclusive-resource-groups-for-dts).
+  change at any time. See [Exclusive resource group](https://help.aliyun.com/zh/maxcompute/user-guide/purchase-and-use-exclusive-resource-groups-for-dts).
 - (Optional) Schema activation: Enable Schema mode to use different directories in Presto. Refer
   to [How to Enable Schema Model in MaxCompute](https://help.aliyun.com/zh/maxcompute/user-guide/schema-related-operations) for more information.
 
