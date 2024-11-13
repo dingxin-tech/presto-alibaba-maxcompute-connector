@@ -90,7 +90,7 @@ these data types in future versions.
 
 ### Notices
 
-This project is still under active development, with plans to introduce more features in subsequent versions, such as support for DDL operations, data writing, and expanded data
+This project is under active development, with plans to introduce more features in subsequent versions, such as support for DDL operations, data writing, and expanded data
 type support. We welcome and encourage community members to participate and contribute.
 
 ### Contributors
