@@ -28,21 +28,20 @@ Before configuring the MaxCompute connector, have ready all the necessary inform
 ID, access key, and resource group name.
 
 1. Create a configuration file (for example, `maxcompute.properties`) in Presto's `etc/catalog` directory:
-
-```properties
-# MaxCompute Connector
-connector.name=maxcompute
-# MaxCompute project name, connections support only this project
-odps.project.name=<Your MaxCompute Project Name>
-# Alibaba Cloud authentication parameter
-odps.access.id=<Your Alibaba Cloud Access ID>
-# Alibaba Cloud authentication parameter
-odps.access.key=<Your Alibaba Cloud Access Key>
-# MaxCompute Endpoint
-odps.end.point=<Your MaxCompute Endpoint>
-# MaxCompute exclusive resource group name
-odps.quota.name=<Your MaxCompute Exclusive Resource Group Name>
-```
+    ```properties
+    # MaxCompute Connector
+    connector.name=maxcompute
+    # MaxCompute project name, connections support only this project
+    odps.project.name=<Your MaxCompute Project Name>
+    # Alibaba Cloud authentication parameter
+    odps.access.id=<Your Alibaba Cloud Access ID>
+    # Alibaba Cloud authentication parameter
+    odps.access.key=<Your Alibaba Cloud Access Key>
+    # MaxCompute Endpoint
+    odps.end.point=<Your MaxCompute Endpoint>
+    # MaxCompute exclusive resource group name
+    odps.quota.name=<Your MaxCompute Exclusive Resource Group Name>
+    ```
 
 2. Replace `<Your MaxCompute Project Name>`, `<Your Alibaba Cloud Access ID>`, `<Your Alibaba Cloud Access Key>`, `<Your MaxCompute Service Endpoint>`,
 and `<Your MaxCompute Exclusive Resource Group Name>` with the values for your MaxCompute environment.
