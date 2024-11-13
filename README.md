@@ -85,7 +85,7 @@ types:
 | DECIMAL              | DECIMAL          |
 | ARRAY                | ARRAY            |
 
-Please note that some MaxCompute data types (such as `MAP`, `STRUCT`) are not yet fully supported in the current version of the connector. We plan to continue refining support for
+Note: Some MaxCompute data types (such as `MAP`, `STRUCT`) are not fully supported in the current version of the connector.
 these data types in future versions.
 
 ### Notices
