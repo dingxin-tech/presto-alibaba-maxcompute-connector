@@ -86,7 +86,6 @@ types:
 | ARRAY                | ARRAY            |
 
 Note: Some MaxCompute data types (such as `MAP`, `STRUCT`) are not fully supported in the current version of the connector.
-these data types in future versions.
 
 ### Notices
 
